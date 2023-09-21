@@ -1,0 +1,29 @@
+version: '3.4'
+services:
+  db:
+    image: mongo:latest
+    container_name: 'mongo'
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./database/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongodb-data:/data/db
+      - mongodb-log:/var/log/mongodb
+  goapp:
+    image: go-app
+    env_file:
+      - .env
+    build:
+      context: .
+    container_name: go-app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+# Names our volume
+volumes:
+  mongodb-data:
+    driver: local
+  mongodb-log:
+    driver: local
+
